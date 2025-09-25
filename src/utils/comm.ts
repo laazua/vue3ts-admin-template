@@ -9,17 +9,12 @@ export const setToken = (token: string) => localStorage.setItem('token', token)
 
 
 // 动态路由转换
-export const formatRoutes = (routes: ApiRoute[]): AppRouteRecordRaw[] => {
-  // 扫描 views 目录下所有 vue 文件
+export const formatRoutes = (routes: ApiRoute[], parentPath = ''): AppRouteRecordRaw[] => {
   const modules: Record<string, () => Promise<any>> = import.meta.glob('@/views/**/*.vue')
-  
-  // 特殊组件单独定义
   const Layout = () => import('@/layout/Layout.vue')
 
   return routes.map(route => {
     const r: AppRouteRecordRaw = { ...route } as any
-
-    // 使用临时变量保存后端组件名
     const compName = route.component
 
     // Layout 特殊处理
@@ -37,9 +32,14 @@ export const formatRoutes = (routes: ApiRoute[]): AppRouteRecordRaw[] => {
 
     // 递归处理子路由
     if (route.children && route.children.length > 0) {
-      r.children = formatRoutes(route.children)
+      r.children = formatRoutes(route.children, r.path)
     }
-
     return r
   })
+}
+
+
+// 获取用户路由
+export const loadRoutes = (staticRoutes: AppRouteRecordRaw[], userRoutes: AppRouteRecordRaw[]) => {
+  return [...staticRoutes.filter(route => route.name !== 'login'), ...userRoutes]
 }

@@ -1,4 +1,4 @@
-// 封装请求响应
+// 封装请求响应拦截器
 import axios from 'axios'
 import type { 
     AxiosInstance,
@@ -25,7 +25,7 @@ type CompatibleRequestConfig =
 
 // 创建 axios 实例
 const service: AxiosInstance = axios.create({
-    url: import.meta.env.VITE_API_BASE_URL || '/',
+    baseURL: import.meta.env.VITE_API_BASE_URL || '',
     timeout: 6000
 })
 
@@ -54,19 +54,13 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response: AxiosResponse<ApiResponse>) => {
         const res = response.data
-        if (res.code !== 2000) {
-            ElMessage({
-                type: 'error',
-                message: res.message || 'Backend Response Error',
-                duration: 6000,
-            })
+        if (res.code !== 20000) {
+            ElMessage.error(res.message || 'Backend Response Error')
             return Promise.reject(new Error(res.message || 'Backend Response Error'))
         }
-        return res.data
+        return res.data as any  // 这里返回的数据是ApiResponse中的 data: T
     },
-    error => {
-        return Promise.reject(error)
-    }
+    error => Promise.reject(error)
 )
 
 export default service

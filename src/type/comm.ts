@@ -1,13 +1,21 @@
 // 一些公共接口类型
 import type { RouteRecordRaw } from 'vue-router'
+import type { LoginRequest } from '@/type/user'
 
 // http 接口数据返回通用格式
 export interface ApiResponse<T = any> {
+    token: string
     code: number
     data: T
     message: string
 }
 
+// mock data
+export interface MockRequest {
+  body: LoginRequest
+  query?: Record<string, any>
+  headers?: Record<string, any>
+}
 
 // route meta数据格式
 export interface RouteMeta {
@@ -30,3 +38,4 @@ export interface ApiRoute {
   meta?: any
   children?: ApiRoute[]
 }
+

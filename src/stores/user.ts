@@ -1,43 +1,76 @@
 import { defineStore } from "pinia"
+import { ref, computed } from "vue"
 import type { LoginRequest, UserInfoResp } from "@/type/user"
 import { getUserInfo, loginApi } from "@/api/user"
-import { delToken, formatRoutes, setToken } from "@/utils/comm"
+import { delToken, formatRoutes, loadRoutes, setToken, getToken } from "@/utils/comm"
 import type { AppRouteRecordRaw } from "@/type/comm"
+import router, { routes } from '@/router'
 
 
 export const useUserStore = defineStore('user', () => {
-    const token = ref<string>('')
-    const isLogin = ref<boolean>(false)
+    // state
+    const token = ref<string>(getToken() || '')
+    const isLogin = ref<boolean>(!!token.value)
     const userInfo = ref<UserInfoResp | null>(null)
-    const userRoutes = ref<AppRouteRecordRaw[]>([])
-    // 登录数据请求
+    // computed: 用户路由
+    const userRoutes = computed<AppRouteRecordRaw[]>(() =>
+        userInfo.value?.routes ? formatRoutes(userInfo.value.routes) : []
+    )
+    // actions
+    /** 登录 */
     const login = async (data: LoginRequest) => {
         try {
             const { username } = data
-            const res = await loginApi(data)
-            token.value = res.data.token
-            if (token) setToken(token.value)
+            const res = await loginApi(data) as { token: string }
+            token.value = res.token
+            if (token.value) setToken(token.value)
+
             userInfo.value = await fetchUserInfo(username)
-            userRoutes.value = formatRoutes(userInfo.value?.routes || []) || []
-            console.log(res)
+            isLogin.value = true
+
             return true
         } catch (error) {
-            console.log(error)
+            console.error('登录失败:', error)
             return false
         }
     }
-    // 用户信息数据请求
-    const fetchUserInfo = async (name: string) => {
-        const res = await getUserInfo(name)
-        return res.data
+    /** 获取用户信息 */
+    const fetchUserInfo = async (username: string) => {
+        const res = await getUserInfo(username)
+        return res as UserInfoResp
     }
-    // 用户登出系统
+    /** 获取用户可访问路由 */
+    const getMenuRoutes = async () => {
+        return loadRoutes(routes, userRoutes.value)
+    }
+    /** 重新注册用户路由 */
+    const restoreUserRoutes = async () => {
+        if (token && userInfo.value?.routes) {
+            userRoutes.value.forEach(route => router.addRoute(route))
+        }
+        isLogin.value = false
+    }
+    /** 登出 */
     const logout = async () => {
-        token.value = ""
+        token.value = ''
         isLogin.value = false
         userInfo.value = null
-        userRoutes.value = []
         delToken()
     }
-    return { token, isLogin, userRoutes, login, logout }
+
+    return {
+        token,
+        isLogin,
+        userInfo,
+        userRoutes,
+        login,
+        logout,
+        getMenuRoutes,
+        restoreUserRoutes
+    }
+}, {
+    persist: {
+        key: 'user',
+        storage: localStorage,
+    }
 })

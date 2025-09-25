@@ -1,5 +1,5 @@
 // mock用户相关的数据
-import type { LoginRequest } from '@/type/user'
+import type { MockRequest } from '@/type/comm'
 import type { MockMethod } from 'vite-plugin-mock'
 
 
@@ -7,7 +7,7 @@ export default [
   {
     url: '/api/login',
     method: 'post',
-    response: (body: LoginRequest) => {
+    response: ({body}: MockRequest) => {
       const { username, password } = body
       if (username === 'admin' && password === '123456') {
         return { code: 20000, message: '登录成功', data: { token: 'vue3ts-admin-template' } }
@@ -24,11 +24,10 @@ export default [
         email: 'admin@test.com',
         roles: ['admin'],
         routes: [
-         {
+          {
             path: '/system',
             name: 'system',
             component: 'Layout',
-            redirect: '/system/menu',
             meta: { title: '系统管理', icon: 'Tools' },
             children: [
               {
