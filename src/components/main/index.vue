@@ -10,6 +10,7 @@
 
 <style scoped>
 .app-main {
+  overflow: hidden;
   flex: 1;
   padding: 16px;
   background: #f0f2f5;
