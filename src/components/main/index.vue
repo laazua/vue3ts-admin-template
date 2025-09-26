@@ -14,6 +14,7 @@
   padding: 16px;
   background: #f0f2f5;
   overflow: auto;
+  margin: 0;
 }
 .fade-transform-enter-active,
 .fade-transform-leave-active {

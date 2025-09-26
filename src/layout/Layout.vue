@@ -5,7 +5,18 @@
 
     <!-- 侧边栏 + main区域 -->
     <div class="body-container">
-      <SiderBar class="siderbar" />
+      <!-- 侧边栏 -->
+      <transition name="sidebar">
+        <div
+          class="siderbar"
+          :style="{ width: appStore.isCollapse ? '64px' : '200px' }"
+          key="sidebar"
+        >
+          <SiderBar />
+        </div>
+      </transition>
+
+      <!-- 主体部分 -->
       <div class="main-container">
         <MainApp class="main-zone" />
       </div>
@@ -14,14 +25,20 @@
 </template>
 
 <script lang="ts" setup>
-
 import NavBar from '@/components/navbar'
 import SiderBar from '@/components/siderbar'
 import MainApp from '@/components/main'
+import { useAppStore } from '@/stores/app'
 
+const appStore = useAppStore()
 </script>
 
 <style scoped>
+
+:global(body) {
+  margin: 0;
+  height: 100%;
+}
 
 .layout-container {
   display: flex;
@@ -44,9 +61,21 @@ import MainApp from '@/components/main'
 }
 
 .siderbar {
-  width: 200px;
   background: #304156;
   overflow-y: auto;
+  transition: width 0.3s ease;
+  height: 100%;
+}
+
+/* 过渡动画定义 */
+.sidebar-enter-active,
+.sidebar-leave-active {
+  transition: all 0.3s ease;
+}
+.sidebar-enter-from,
+.sidebar-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
 .main-container {
@@ -54,6 +83,7 @@ import MainApp from '@/components/main'
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .main-zone {
@@ -62,5 +92,4 @@ import MainApp from '@/components/main'
   background: #f5f7fa;
   padding: 16px;
 }
-
 </style>

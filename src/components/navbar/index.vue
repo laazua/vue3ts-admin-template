@@ -1,10 +1,22 @@
 <template>
   <div class="navbar">
     <div class="left">
+      <!-- 折叠按钮 -->
+      <el-button
+        class="collapse-btn"
+        text
+        @click="appStore.toggleCollapse"
+      >
+        <el-icon>
+          <component :is="appStore.isCollapse ? Expand : Fold" />
+        </el-icon>
+      </el-button>
+
       <span class="logo">
-        vue3-admin-template
+        vue3ts-admin-template
       </span>
     </div>
+
     <div class="right">
       <el-dropdown>
         <span class="el-dropdown-link">
@@ -22,25 +34,25 @@
 </template>
 
 <script lang="ts" setup>
-
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useAppStore } from '@/stores/app'
+import { Fold, Expand } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userStore = useUserStore() as any
+const appStore = useAppStore()
 
 const logout = async () => {
   await userStore.logout()
   router.push('/login')
 }
-
 </script>
 
 <style scoped>
-
 .navbar {
   height: 50px;
-  background: #fff;
+  background: #304156;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,15 +62,21 @@ const logout = async () => {
 
 .left {
   display: flex;
+  align-items: center;
 }
 
 .logo {
   font-weight: bold;
   color: #fff;
+  margin-left: 12px;
+}
+
+.collapse-btn {
+  color: #fff;
+  font-size: 20px;
 }
 
 .el-dropdown-link {
   color: #fff;
 }
-
 </style>
