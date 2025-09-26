@@ -24,10 +24,7 @@ export const useUserStore = defineStore('user', () => {
             const res = await loginApi(data) as { token: string }
             token.value = res.token
             if (token.value) setToken(token.value)
-
             userInfo.value = await fetchUserInfo(username)
-            isLogin.value = true
-
             return true
         } catch (error) {
             console.error('登录失败:', error)
