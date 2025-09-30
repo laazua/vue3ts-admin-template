@@ -1,19 +1,18 @@
 <template>
   <section class="app-main">
-    <router-view v-slot="{ Component, route }">
-      <transition name="fade-transform" mode="out-in">
-        <component :is="Component" :key="route.fullPath" />
-      </transition>
-    </router-view>
-  </section>
+  <router-view v-slot="{ Component, route }">
+    <transition name="fade-transform" mode="out-in">
+      <component :is="Component" :key="route.fullPath" />
+    </transition>
+  </router-view>
+</section>
 </template>
 
 <style scoped>
 .app-main {
-  overflow: hidden;
   flex: 1;
   padding: 16px;
-  background: #f0f2f5;
+  background: #e5e8ec;
   overflow: auto;
   margin: 0;
 }

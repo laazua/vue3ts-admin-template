@@ -91,5 +91,6 @@ const appStore = useAppStore()
   overflow-y: auto;
   background: #f5f7fa;
   padding: 16px;
+  overflow: hidden;
 }
 </style>
