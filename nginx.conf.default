@@ -1,0 +1,19 @@
+server {
+    listen 8880;
+    server_name 192.168.165.87;
+    error_log /var/log/nginx/vue3ts-admin-template-error.log;
+    access_log /var/log/nginx/vue3ts-admin-template.log main;
+
+    root /var/www/vue3ts-admin-template;
+    # SPA路由支持
+    location / {
+        index index.html;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 静态资源缓存
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
